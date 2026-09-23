@@ -1,0 +1,7 @@
+node_modules/
+*.csv
+shopday-backup-*.json
+.vercel/
+.DS_Store
+.codex/
+Shopday-Vercel-Sales-App.zip

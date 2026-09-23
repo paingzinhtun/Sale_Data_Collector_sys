@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#193b31"><meta name="description" content="A simple daily sales ledger for traditional shops.">
+  <link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css"><title>Shopday · Sales ledger</title>
+</head><body>
+  <div class="shell">
+    <header class="topbar"><div class="brand"><span class="brand-mark">S<span class="brand-dot">.</span></span><span>shopday</span></div><span class="top-right"><span class="status-dot"></span> On this device</span></header>
+    <main>
+      <div class="eyebrow">THE EVERYDAY LEDGER</div>
+      <div class="page-heading"><div><h1>Good records, better decisions.</h1><p>Record every purchase, from a single pen to a full basket.</p></div><div id="date-label" class="date-pill"></div></div>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <div id="storage-warning" class="storage-warning" hidden>Records are saved only in this browser. Download your CSV when you close each day and back up all days regularly.</div>
+      <section id="day-banner" class="day-banner" aria-live="polite"></section>
+      <nav class="tabs" aria-label="Sections"><button class="tab active" data-tab="sell">New sale</button><button class="tab" data-tab="daybook">Daybook</button><button class="tab" data-tab="history">History &amp; backup</button></nav>
+
+      <section id="sell-panel" class="panel" aria-labelledby="sell-title">
+        <div class="section-heading"><div><span class="step">01 / RECORD</span><h2 id="sell-title">Add a sale</h2><p>One customer visit = one sale ID. Add every item in their basket.</p></div><div id="next-id" class="id-chip">Next · —</div></div>
+        <form id="sale-form" autocomplete="off">
+          <div class="form-label-row"><label>Products sold</label><span>Amounts in whole MMK</span></div>
+          <div id="item-list" class="item-list"></div>
+          <button type="button" id="add-item" class="add-item">＋ Add another product</button>
+          <div class="sale-extras"><label class="field">Payment <select id="payment"><option value="cash">Cash</option><option value="other">Other / transfer</option></select></label><label class="field">Note <span class="optional">(optional)</span><input id="sale-note" maxlength="300" placeholder="e.g. bulk order"></label></div>
+          <div class="sale-bottom"><div><span>Sale total</span><strong id="sale-total">0 MMK</strong></div><button class="primary" type="submit" id="save-sale">Save sale <span aria-hidden="true">↗</span></button></div>
+        </form>
+      </section>
+
+      <section id="daybook-panel" class="panel" hidden aria-labelledby="daybook-title">
+        <div class="section-heading"><div><span class="step">02 / REVIEW</span><h2 id="daybook-title">Daybook</h2><p id="daybook-subtitle">Sales and cash snapshot for your selected day.</p></div><button id="export-day" class="secondary">↓ Download CSV</button></div>
+        <div id="daybook-content"></div>
+      </section>
+
+      <section id="history-panel" class="panel" hidden aria-labelledby="history-title">
+        <div class="section-heading"><div><span class="step">03 / KEEP SAFE</span><h2 id="history-title">History &amp; backup</h2><p>Review past days and keep a copy of your shop records.</p></div></div>
+        <div class="backup-box"><div><strong>Protect your records</strong><p>Sales live on this device. Save a full backup regularly and keep your daily CSV files somewhere safe.</p></div><button id="backup-all" class="secondary">↓ Back up all days</button></div>
+        <div class="restore-line"><label for="restore-file">Restore a Shopday JSON backup</label><input type="file" id="restore-file" accept=".json,application/json"><small>Restore only works when this browser has no Shopday records. It never overwrites an existing ledger.</small></div>
+        <h3 class="list-heading">Business days <span id="day-count"></span></h3><div id="history-list"></div>
+      </section>
+    </main><footer>Built for the rhythm of a real shop. <span>Shopday · v1</span></footer>
+  </div>
+
+  <dialog id="open-dialog"><form method="dialog" id="open-form" class="dialog-card"><button type="button" class="x-button" data-close aria-label="Close">×</button><span class="step">START THE DAY</span><h2>Open your shop</h2><p>Confirm the date and the cash already in your drawer. Your first sale today will be <b>0001</b>.</p><label class="field">Business date <input id="open-date" type="date" required></label><label class="field">Opening cash in drawer (MMK) <input id="opening-cash" type="number" min="0" max="999999999999" step="1" value="0" inputmode="numeric" required></label><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancel</button><button type="submit" class="primary">Open shop</button></div></form></dialog>
+  <dialog id="close-dialog"><form method="dialog" id="close-form" class="dialog-card"><button type="button" class="x-button" data-close aria-label="Close">×</button><span class="step">END THE DAY</span><h2>Close your shop</h2><p id="close-summary"></p><div class="cash-context" id="expected-cash"></div><label class="field">Cash counted in drawer (MMK) <input id="counted-cash" type="number" min="0" max="999999999999" step="1" inputmode="numeric" required></label><div class="two-fields"><label class="field">Keep for tomorrow <input id="kept-cash" type="number" min="0" max="999999999999" step="1" value="0" inputmode="numeric" required></label><label class="field">Set aside / savings <input id="set-aside" type="number" min="0" max="999999999999" step="1" value="0" inputmode="numeric" required></label></div><small id="allocation-left"></small><label class="field">Closing note <span class="optional">(optional)</span><input id="closing-note" maxlength="300" placeholder="e.g. paid supplier from drawer"></label><p class="fine-print">The estimate excludes spending, withdrawals and other cash movements. Count actual cash yourself. Closing downloads an item-level CSV.</p><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancel</button><button type="submit" class="primary">Close &amp; download CSV</button></div></form></dialog>
+  <dialog id="void-dialog"><form method="dialog" id="void-form" class="dialog-card"><button type="button" class="x-button" data-close aria-label="Close">×</button><span class="step">CORRECT A RECORD</span><h2 id="void-title">Void sale</h2><p>The sale stays in the CSV with its original ID and a void marker. The next sale gets a new ID.</p><label class="field">Reason for correction <input id="void-reason" required maxlength="200" placeholder="e.g. entered twice"></label><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancel</button><button type="submit" class="danger">Void sale</button></div></form></dialog>
+  <template id="item-template"><div class="item-row"><div class="item-number">01</div><label class="field product-field">Product name <input class="product-input" list="product-suggestions" required maxlength="120" placeholder="e.g. Ballpoint pen"></label><label class="field quantity-field">Qty <input class="quantity-input" type="number" min="1" max="999999999999" step="1" value="1" inputmode="numeric" required></label><label class="field price-field">Price each (MMK) <input class="price-input" type="number" min="0" max="999999999999" step="1" placeholder="0" inputmode="numeric" required></label><button type="button" class="remove-item" aria-label="Remove product">×</button></div></template><datalist id="product-suggestions"></datalist>
+  <script type="module" src="/app.js"></script>
+</body></html>

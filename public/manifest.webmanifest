@@ -1,0 +1,10 @@
+{
+  "name": "Shopday — Sales Ledger",
+  "short_name": "Shopday",
+  "description": "A simple daily sales ledger for traditional shops",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f7f3",
+  "theme_color": "#193b31",
+  "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
