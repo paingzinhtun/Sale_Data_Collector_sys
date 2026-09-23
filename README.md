@@ -2,6 +2,20 @@
 
 Shopday records each customer purchase as one sale with one or more items. It assigns `0001`, `0002`, and so on within each business day, records the entry time, and exports the closed day's item-level data as a UTF-8 CSV. A sale number can repeat on another day; use **business date + sale ID** as the unique reference.
 
+## Why this project exists
+
+Some traditional shops count the money at closing but do not record which products were sold. That makes it difficult to answer simple questions later: *What sold today? How many units? Can we reconstruct the day's sales?* Shopday makes item-level recording possible with a short entry after each customer leaves.
+
+This is a working prototype for **one shop device**. It has not yet been validated as a faster or more accurate workflow in a real shop. Read the [project case study](docs/CASE_STUDY.md) for the design decisions, evidence collected so far, and a small field-trial plan.
+
+### What the first version does
+
+- Records a purchase with one or more products, quantities, prices, and a payment method.
+- Assigns a sequential sale ID for each business day and records entry time.
+- Shows a daybook and cash-sales summary; voids an incorrect sale while preserving its ID.
+- Closes a day with an actual cash count and downloads an item-level CSV.
+- Saves a full JSON backup for recovery in an empty browser profile.
+
 ## Run locally
 
 From the project root:
